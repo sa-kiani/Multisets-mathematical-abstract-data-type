@@ -1,0 +1,120 @@
+========================================================================
+                          Complexity Analysis
+========================================================================
+------------------
+    MsetUnion
+------------------
+
+Worst-case time complexity: log((n + m)!)
+
+I am assuming all functions are balanced, as I'm writing this after completing
+stage 3.
+
+Creating a new Mset is O(1), but we can omit it since its a constant.
+
+adding the first mset into empty union will take log(1) 
+(refer to lecture notes for tree traversal time complexity).  
+ 
+Likewise, the second node is log(2) because it needs to compare it's value to 
+the root node before insertion. 
+Continuing the pattern for 3, we get log(3),
+etc until log(n) for the n-th node.
+
+adding: log(1) + log(2) + log(3) + ... + log(n) = log(1*2*3*...*n) = log(n!).
+
+adding s2, the first node added would traverse log(n+1) nodes, since there
+is already n nodes in the tree. 
+Then the second will be log(n+2), then log(n+3), all until
+the m-th node log(n + m).
+
+Adding: log(n+1) + log(n+2) + ... + log(n + m)
+= log((n + m)!/n!)
+
+adding the two, log(n!) + log((n + m)!/n!) = log((n + m)!). 
+
+------------------
+ MsetIntersection
+------------------
+Worst-case time complexity: O(n(log(n * m)))                             
+
+Explanation: 
+Creating a new Mset is O(1), but we can omit it since its a constant.
+
+We then call addIfIntersect, which adds the element to the new tree if both 
+the first and second tree have it.
+
+We use each node in t1 as the reference.
+For each n node:
+
+we find its count in s2, which as the tree is balanced, the worst case
+would be O(log(m)) (refer to "COMP2521 23T3 - Balanced Binary Search Trees"). 
+So accounting for all s1 nodes, it would be O(n*log(m)).
+
+We then compare the counts for the same element in s1 and s2 if it exists. The
+worst case would be if they always exist and s2 is always smaller, forcing
+the function to adjust every single time. The comparison would be O(1), which
+is irrelevant for big O, then worst case for calling insertMany will be
+O(log(n)) since its balanced. so for all n nodes, it would be O(n*log(n)).
+
+adding the operations for each n we get
+
+n*log(n) + n* log(m).
+
+factorising n and adding the logs: n(log(n * m)). Thus O(n(log(n * m)))
+
+
+------------------
+   MsetIncluded
+------------------
+Worst-case time complexity: O(n*log(m))
+
+Explanation: 
+The worst case would be if all nodes in s1 were in s2, having to compare all 
+nodes' counts, and the count of s1 <= s2 so that the function will not exit early.
+Neither set should be NULL as that will end the function early.
+
+For each node n in s1, the function calls MsetGetCount which searches s2 to find
+the same node n. 
+As outlined before, traversing a balanced tree takes O(log(m)) for each node, 
+for insertion, searching, and deletion. Thus, for every node total, it will take 
+O(n*log(m)). 
+
+comparing the counts to determine if the n node does not exceed its
+m counterpart in s2, will take 1 comparison every time, accumulating to O(n). 
+Likewise, the helper function checkIfIncluded checks if the current s1 node is
+NULL, making n checks total. Making both = O(2n), and refined to O(n) as 2 is a constant.
+
+Adding all: O(n*log(m) + n). However for Big O, we will take the dominant (largest)
+term: therefore O(n*log(m)).
+
+
+------------------
+    MsetEquals
+------------------
+Worst-case time complexity: O(n*log(m))
+
+Explanation: 
+This function acts very similar to MsetIncluded, yet differs by ensuring the 
+counts of the elements are the same, rather than s1 <= s2. Therefore,
+the worst case would be if all nodes in s1 were in s2, having to compare all 
+nodes' counts, and the count of s1 = s2 so that the function will not exit early.
+Furthermore, if both trees are NULL, the code will exit early since theyre 
+equal. Or if only one of them is NULL, the function will again exit since theyre
+not equal. The worst case will be if neither if-statements are true: neither
+Msets are NULL.
+
+Additionally, if any counts of nodes in s1 and their s2 counterparts are not
+equal, the function will return false, ending early. The worst case will be if
+the msets are entirely equal or if s1's size > s2, forcing all nodes to be compared.
+
+The helper function checkIfEqual works almost identical to checkIfIncluded. 
+Likewise to checkIfIncluded, it will have O(1) per n node for checking if n is NULL, 
+and to compare counts between s1 and s2 nodes. 
+Total will be O(2n), and refined to O(n) as 2 is a constant.
+
+Finding the count of the s2 counterpart for MsetGetCount will take log(m) for every
+node n as outlined before. In total it will take O(n*log(m)). 
+
+Adding all: O(n*log(m) + n). However for Big O, we will take the dominant (largest)
+term: therefore O(n*log(m)).
+
